@@ -1,3 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using TamaDotNet.Server.Data;
+using TamaDotNet.Server.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews()

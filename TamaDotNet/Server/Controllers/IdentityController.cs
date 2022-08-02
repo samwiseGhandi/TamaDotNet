@@ -1,19 +1,31 @@
-﻿namespace TamaDotNet.Server.Controllers
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using TamaDotNet.Server.Models;
+using TamaDotNet.Shared.DTO;
+
+namespace TamaDotNet.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class IdentityController : Controller
     {
-        readonly IConfiguration configuration;
+        readonly IConfiguration _configuration;
+        readonly SignInManager<ApplicationUser> _signInManager;
 
-        public IdentityController(IConfiguration configurator)
+        public IdentityController(IConfiguration configurator, SignInManager<ApplicationUser> signInManager)
         {
-            configuration = configurator;
+            _configuration = configurator;
+            _signInManager = signInManager;
+
         }
 
         string GenerateToken(string id)
         {
-            string key = configuration.GetValue<string>("TokenKey"); ;
+            string key = _configuration.GetValue<string>("TokenKey"); ;
 
             // Create Security key  using private key above:
             // not that latest version of JWT using Microsoft namespace instead of System
@@ -41,6 +53,18 @@
 
 
             return handler.WriteToken(SecurityToken);
+        }
+
+        [HttpPost("signup")]
+        public async Task SignUp(SignupModel signupModel) {
+            if(signupModel != null) {
+                ApplicationUser apUser = new ApplicationUser() {
+                    UserName = signupModel.Name
+                };
+
+                await _signInManager.UserManager.CreateAsync(apUser, signupModel.Password);
+
+            }
         }
     }
 }

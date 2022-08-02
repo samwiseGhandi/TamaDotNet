@@ -4,3 +4,5 @@ global using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 global using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 global using TamaDotNet.Client;
 global using Blazored.LocalStorage;
+global using TamaDotNet.Shared.Data;
+global using TamaDotNet.Shared.DTO;

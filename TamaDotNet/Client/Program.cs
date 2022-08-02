@@ -1,6 +1,9 @@
+using TamaDotNet.Client.Services;
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
 
 builder.Services.AddHttpClient("TamaDotNet.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
@@ -17,5 +20,6 @@ builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.Get
 builder.Services.AddOptions();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<IdentityService>();
 
 await builder.Build().RunAsync();
