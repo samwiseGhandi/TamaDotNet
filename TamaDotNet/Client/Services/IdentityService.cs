@@ -12,7 +12,20 @@ namespace TamaDotNet.Client.Services {
             _localStorageService = localStorageService;
         }
         public async Task PostUser(SignupModel SignUp) {
-            await _httpClient.PostAsJsonAsync("api/identity/signup", SignUp);
+            var response = await _httpClient.PostAsJsonAsync("api/identity/signup", SignUp);
+
+            if(response.IsSuccessStatusCode) {
+                string token = await response.Content.ReadFromJsonAsync<string>();
+                await _localStorageService.SetItemAsStringAsync("token", token);
+            }
+        }
+        public async Task LoginUser(LoginModel LogIn) {
+            var response = await _httpClient.PostAsJsonAsync("api/identity/login", LogIn);
+
+            if(response.IsSuccessStatusCode) {
+                string token = await response.Content.ReadFromJsonAsync<string>();
+                await _localStorageService.SetItemAsStringAsync("token", token);
+            }
         }
     }
 }

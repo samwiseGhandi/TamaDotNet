@@ -56,15 +56,39 @@ namespace TamaDotNet.Server.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task SignUp(SignupModel signupModel) {
+        public async Task<ActionResult> SignUp(SignupModel signupModel) {
             if(signupModel != null) {
                 ApplicationUser apUser = new ApplicationUser() {
                     UserName = signupModel.Name
                 };
 
-                await _signInManager.UserManager.CreateAsync(apUser, signupModel.Password);
 
+                var _createdUser = await _signInManager.UserManager.CreateAsync(apUser, signupModel.Password);
+                
+                if(_createdUser.Succeeded) {
+                    apUser.Token = GenerateToken(apUser.Id);
+                    await _signInManager.UserManager.UpdateAsync(apUser);
+                    return Ok($"\"{apUser.Token}\"");
+                    
+                    
+                }
             }
+            return BadRequest("Try again..");
+        }
+        [HttpPost("login")]
+        public async Task<ActionResult> LogIn(LoginModel loginModel) {
+            if(loginModel != null) {
+                var _dbUser = await _signInManager.UserManager.FindByNameAsync(loginModel.Name);
+
+                if(_dbUser != null) {
+                    var _loginAttempt = await _signInManager.CheckPasswordSignInAsync(_dbUser, loginModel.Password, false);
+                    
+                    if(_loginAttempt.Succeeded) {
+                        return Ok($"\"{_dbUser.Token}\"");
+                    }
+                }
+            }
+            return BadRequest("Try again..");
         }
     }
 }

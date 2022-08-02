@@ -1,7 +1,14 @@
-﻿<h3>Login</h3>
-<form>
-    
-</form>
+﻿@page "/login"
+@inject IdentityService IdentityService
+<h3>Login</h3>
+<EditForm Model="_login" OnSubmit="LoginUser">
+    <InputText @bind-Value="_login.Name" placeholder="Username..."></InputText>
+    <InputText type="password" @bind-Value="_login.Password" placeholder="Password..."></InputText>
+    <button type="submit" class="btn btn-primary">Log in</button>
+</EditForm>
 @code {
-
+    LoginModel _login = new();
+    async Task LoginUser() {
+        await IdentityService.LoginUser(_login);
+    }
 }

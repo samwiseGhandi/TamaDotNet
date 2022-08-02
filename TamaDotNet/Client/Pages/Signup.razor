@@ -1,11 +1,10 @@
 ﻿@page "/Signup"
-@using TamaDotNet.Client.Services
 @inject IdentityService IdentityService
 <h3>Signup</h3>
 <EditForm Model="_signUp" OnSubmit="PostUser">
     <InputText @bind-Value="_signUp.Name" placeholder="Username..."></InputText>
     <InputText type="password" @bind-Value="_signUp.Password" placeholder="Password..."></InputText>
-    <button type="submit" class="btn btn-primary"></button>
+    <button type="submit" class="btn btn-primary">Sign Up</button>
 </EditForm>
 @code {
     SignupModel _signUp = new SignupModel();
@@ -13,4 +12,5 @@
     async Task PostUser() {
         await IdentityService.PostUser(_signUp);
     }
+
 }

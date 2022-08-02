@@ -6,5 +6,7 @@ using System.Threading.Tasks;
 
 namespace TamaDotNet.Shared.DTO {
     public class LoginModel {
+        public string Name { get; set; }
+        public string Password { get; set; }
     }
 }

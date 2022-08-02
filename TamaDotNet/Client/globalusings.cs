@@ -6,3 +6,4 @@ global using TamaDotNet.Client;
 global using Blazored.LocalStorage;
 global using TamaDotNet.Shared.Data;
 global using TamaDotNet.Shared.DTO;
+global using TamaDotNet.Client.Services;
