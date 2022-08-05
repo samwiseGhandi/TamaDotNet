@@ -34,6 +34,9 @@ builder.Services.Configure<IdentityOptions>(options => //Password settings
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 3;
     options.Password.RequireUppercase = false;
+    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
+    options.SignIn.RequireConfirmedAccount = false;
 });
 
 builder.Services

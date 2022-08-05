@@ -16,4 +16,6 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<IdentityService>();
 
+builder.Services.AddScoped<TamaService>();
+
 await builder.Build().RunAsync();

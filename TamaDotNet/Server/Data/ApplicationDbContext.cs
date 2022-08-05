@@ -11,6 +11,7 @@ namespace TamaDotNet.Server.Data {
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        
 
     }
 }

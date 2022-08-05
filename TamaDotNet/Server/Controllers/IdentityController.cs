@@ -11,21 +11,24 @@ namespace TamaDotNet.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class IdentityController : Controller
+    public class IdentityController:Controller
     {
         readonly IConfiguration _configuration;
         readonly SignInManager<ApplicationUser> _signInManager;
+        readonly ApplicationDbContext _db;
 
-        public IdentityController(IConfiguration configurator, SignInManager<ApplicationUser> signInManager)
+        public IdentityController(IConfiguration configurator, SignInManager<ApplicationUser> signInManager, ApplicationDbContext db)
         {
             _configuration = configurator;
             _signInManager = signInManager;
+            _db = db;
 
         }
 
         string GenerateToken(string id)
         {
-            string key = _configuration.GetValue<string>("TokenKey"); ;
+            string key = _configuration.GetValue<string>("TokenKey");
+            ;
 
             // Create Security key  using private key above:
             // not that latest version of JWT using Microsoft namespace instead of System
@@ -56,39 +59,68 @@ namespace TamaDotNet.Server.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<ActionResult> SignUp(SignupModel signupModel) {
-            if(signupModel != null) {
-                ApplicationUser apUser = new ApplicationUser() {
+        public async Task<ActionResult> SignUp(SignupModel signupModel)
+        {
+            if(signupModel != null)
+            {
+                ApplicationUser apUser = new ApplicationUser()
+                {
                     UserName = signupModel.Name
                 };
 
 
                 var _createdUser = await _signInManager.UserManager.CreateAsync(apUser, signupModel.Password);
-                
-                if(_createdUser.Succeeded) {
+
+                if(_createdUser.Succeeded)
+                {
                     apUser.Token = GenerateToken(apUser.Id);
                     await _signInManager.UserManager.UpdateAsync(apUser);
                     return Ok($"\"{apUser.Token}\"");
-                    
-                    
+
+
                 }
             }
             return BadRequest("Try again..");
         }
         [HttpPost("login")]
-        public async Task<ActionResult> LogIn(LoginModel loginModel) {
-            if(loginModel != null) {
+        public async Task<ActionResult> LogIn(LoginModel loginModel)
+        {
+            if(loginModel != null)
+            {
                 var _dbUser = await _signInManager.UserManager.FindByNameAsync(loginModel.Name);
 
-                if(_dbUser != null) {
+                if(_dbUser != null)
+                {
                     var _loginAttempt = await _signInManager.CheckPasswordSignInAsync(_dbUser, loginModel.Password, false);
-                    
-                    if(_loginAttempt.Succeeded) {
+
+                    if(_loginAttempt.Succeeded)
+                    {
                         return Ok($"\"{_dbUser.Token}\"");
                     }
                 }
             }
             return BadRequest("Try again..");
+        }
+        [HttpGet("user/{token}")]
+        public async Task<ActionResult<UserDataModel>> GetCurrentUser(string token)
+        {
+            if(token == String.Empty) return null;
+
+            var _dbUser = _db.ApplicationUsers.FirstOrDefault(u => u.Token == token);
+
+            if(_dbUser == null)
+            {
+                return BadRequest();
+            } else 
+            {
+                var user = new UserDataModel()
+                {
+                    Id = _dbUser.Id,
+                    Name = _dbUser.UserName
+                };
+                return Ok(user);
+            }
+            
         }
     }
 }

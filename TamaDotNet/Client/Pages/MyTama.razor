@@ -1,0 +1,27 @@
+﻿@page "/mytama";
+
+@inject IdentityService IdentityService;
+@inject TamaService TamaService;
+
+<h3>MyTama</h3>
+<AuthorizeView>
+    <Authorized>
+
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        UserDataModel user = await IdentityService.GetLoggedInUser();
+        if(await TamaService.GetTama(user) == null)
+        {
+            await TamaService.CreateTama(new CreateTama()
+                {
+                    Name = "Olivier",
+                    UserId = user.Id,
+                    ImgURL = "images/Sprite-0001.gif"
+                });
+        }
+    }
+}
