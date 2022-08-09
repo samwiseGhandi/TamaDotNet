@@ -12,6 +12,11 @@ namespace TamaDotNet.Server.Controllers
         {
             _db = db;
         }
+        public async Task<IEnumerable<TamaModel>> GetAllTamas()
+        {
+            List<TamaModel> dbTamas = await _db.Tamas.ToListAsync();
+            return dbTamas;
+        }
         [HttpPost]
         public async Task CreateTama(CreateTama newTama)
         {
@@ -29,12 +34,14 @@ namespace TamaDotNet.Server.Controllers
             await _db.AddAsync( tama);
             await _db.SaveChangesAsync();
         }
-        [HttpGet("{userId}")]
-        public async Task<TamaModel> GetTama(string userId)
+        [HttpPost("user")]
+        public async Task<TamaModel> GetTama(UserDataModel user)
         {
-            var dbtama = _db.Tamas.FirstOrDefault(t => t.UserId == userId);
+            var dbTamas = await GetAllTamas();
+            //.FirstOrDefault(t => t.UserId == user.Id);
 
-            return dbtama;
+            return dbTamas.FirstOrDefault(t => t.UserId == user.Id);
+            
         }
     }
 }

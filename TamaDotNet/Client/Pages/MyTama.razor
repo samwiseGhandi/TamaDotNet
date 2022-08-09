@@ -3,18 +3,62 @@
 @inject IdentityService IdentityService;
 @inject TamaService TamaService;
 
-<h3>MyTama</h3>
 <AuthorizeView>
     <Authorized>
-
+        @if(tama == null)
+        {
+            <p>Loading...</p>
+        } else
+        {
+            <h1>@tama.Name</h1>
+            <div class="row">
+                <div class="col-md-4">
+                    
+                    <div class="row">
+                        <h5><b>Hunger:</b></h5>
+                        <div class="col-md-6">
+                            <h4>@tama.Hunger</h4>
+                        </div>
+                        <div class="col-md-6">
+                            <button>Feed</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h5><b>Hygiene:</b></h5>
+                        <div class="col-md-6">
+                            <h4>@tama.Hygiene</h4>
+                        </div>
+                        <div class="col-md-6">
+                            <button>Wash</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h5><b>Mood:</b></h5>
+                        <div class="col-md-6">
+                            <h4>@tama.Mood</h4>
+                        </div>
+                        <div class="col-md-6">
+                            <button>Talk</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <img src="@tama.ImgUrl" />
+                </div>
+                <div class="col-md-4">
+                </div>
+            </div>
+        }
     </Authorized>
 </AuthorizeView>
 
 @code {
+    TamaModel tama;
+
     protected override async Task OnInitializedAsync()
     {
         UserDataModel user = await IdentityService.GetLoggedInUser();
-        if(await TamaService.GetTama(user) == null)
+        if(await TamaService.HasTama(user) == false)
         {
             await TamaService.CreateTama(new CreateTama()
                 {
@@ -22,6 +66,10 @@
                     UserId = user.Id,
                     ImgURL = "images/Sprite-0001.gif"
                 });
+        } else
+        {
+            tama = await TamaService.GetTama(user);
         }
+        StateHasChanged();
     }
 }
